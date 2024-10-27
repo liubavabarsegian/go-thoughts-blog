@@ -24,7 +24,7 @@ func SetupDatabasee() (*sql.DB, error) {
 	if err != nil {
 		return nil, fmt.Errorf("error while migrating database", err)
 	}
-	return nil, nil
+	return db, nil
 }
 
 func connectDatabase() (*sql.DB, error) {
