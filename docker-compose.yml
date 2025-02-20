@@ -1,0 +1,40 @@
+version: '3.7'
+
+services:
+  postgres:
+    container_name: postgres
+    image: postgres
+    environment:
+      POSTGRES_DB: "dbname"
+      POSTGRES_USER: "username"
+      POSTGRES_PASSWORD: "password"
+    ports:
+      - "5432:5432"
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U username -d dbname"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - blog-network
+
+  blog-service:
+    build:
+      dockerfile: build/Dockerfile
+    container_name: blog-service
+    environment:
+      - GO_ENV=dev
+    ports:
+      - "8888:8888"
+    restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - blog-network
+
+networks:
+  blog-network:
+    driver: bridge

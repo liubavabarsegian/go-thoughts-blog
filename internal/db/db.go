@@ -9,12 +9,12 @@ import (
 const (
 	host     = "localhost"
 	port     = 5432
-	user     = "liuba"
+	user     = "username"
 	password = "password"
-	dbname   = "blog_database"
+	dbname   = "dbname"
 )
 
-func SetupDatabasee() (*sql.DB, error) {
+func SetupDatabase() (*sql.DB, error) {
 	db, err := connectDatabase()
 	if err != nil {
 		return nil, fmt.Errorf("error while connection database", err)

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/gorilla/mux"
 	"github.com/thedevsaddam/renderer"
 )
 
@@ -16,16 +17,27 @@ func init() {
 
 	rnd = renderer.New(opts)
 }
-
-func SetUpRouter() *http.ServeMux {
-	mux := http.NewServeMux()
+func SetupHandlers(mux *mux.Router) {
 	mux.HandleFunc("/", home)
-
-	return mux
+	// mux.HandleFunc("/admin", adminHandler)
 }
 
 func home(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("HOME")
+	// logger := log.Ctx(r.Context())
+	// page := r.URL.Query().Get("page")
+	// articles, hasNext, hasPrevious := fetchArticles(page)
+
+	// data := struct {
+	// 	Posts        []postEntities.Post
+	// 	HasNext      bool
+	// 	HasPrevious  bool
+	// 	NextPage     int
+	// 	PreviousPage int
+	// }{
+	// 	Posts: post.GetAll(),
+	// }
+
+	// logger.Println("INFOO")
 	err := rnd.HTML(w, http.StatusOK, "home", nil)
 	if err != nil {
 		fmt.Printf("Ошибка рендеринга шаблона: %v\n", err)

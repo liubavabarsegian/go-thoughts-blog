@@ -1,27 +1,48 @@
 package app
 
 import (
+	"database/sql"
+	"day06/internal/app/middlewares"
 	"day06/internal/app/router"
 	"day06/internal/db"
-	"log"
 	"net/http"
+
+	"github.com/gorilla/mux"
+	"github.com/rs/zerolog"
+	// "honnef.co/go/tools/config"
 )
 
-func Go() error {
-	// set up envs
-	//set up logger
-	db, err := db.SetupDatabasee()
-	if db != nil {
-		defer db.Close()
-	}
-	if err != nil || db == nil {
-		return err
-	}
-	// set up router
-	mux := router.SetUpRouter()
-	port := ":9000"
-	log.Println("Listening on port ", port)
-	http.ListenAndServe(port, mux)
+// set up envs
+// set up logger
+type App struct {
+	// Config *config.Config
+	Server *http.Server
+	DB     *sql.DB
+}
 
-	return nil
+func New() *App {
+	zerolog.SetGlobalLevel(zerolog.InfoLevel)
+
+	return &App{}
+}
+
+func (app *App) Go() (err error) {
+	db, err := db.SetupDatabase()
+	if err != nil || db == nil {
+		return
+	}
+	defer db.Close()
+
+	mux := app.SetUpRouter()
+	router.SetupHandlers(mux)
+	mux.Use(middlewares.WithLogger)
+
+	// app.Logger.Info().Msgf("Server is listening: %s", "8888")
+	http.ListenAndServe(":8888", mux)
+	return
+}
+
+func (app *App) SetUpRouter() *mux.Router {
+	r := mux.NewRouter()
+	return r
 }

@@ -29,7 +29,7 @@ func Generate(imageName string) {
 		}
 	}
 
-	f, _ := os.Create("amazing_logo.png")
+	f, _ := os.Create("../assets/images/amazing_logo.png")
 	png.Encode(f, img)
 }
 
