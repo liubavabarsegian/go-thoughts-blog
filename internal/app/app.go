@@ -5,6 +5,7 @@ import (
 	"day06/internal/app/middlewares"
 	"day06/internal/app/router"
 	"day06/internal/db"
+	"fmt"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -27,6 +28,7 @@ func New() *App {
 }
 
 func (app *App) Go() (err error) {
+	fmt.Println("started")
 	db, err := db.SetupDatabase()
 	if err != nil || db == nil {
 		return

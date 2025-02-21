@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	host     = "localhost"
+	host     = "postgres"
 	port     = 5432
 	user     = "username"
 	password = "password"
@@ -28,8 +28,10 @@ func SetupDatabase() (*sql.DB, error) {
 }
 
 func connectDatabase() (*sql.DB, error) {
+	fmt.Println("password")
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
 		host, port, user, password, dbname)
+	fmt.Println(password)
 
 	db, err := sql.Open("postgres", psqlInfo)
 	if err != nil {
@@ -45,7 +47,9 @@ func connectDatabase() (*sql.DB, error) {
 }
 
 func migrateDatabase(db *sql.DB) error {
-	sqlFile, err := os.ReadFile("internal/db/schema.sql")
+	wd, err := os.Getwd()
+	fmt.Println(wd)
+	sqlFile, err := os.ReadFile("/app/internal/db/schema.sql")
 	if err != nil {
 		return fmt.Errorf("error while migrating DB schema", err)
 	}

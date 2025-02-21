@@ -10,13 +10,13 @@ import (
 
 var rnd *renderer.Render
 
-func init() {
-	opts := renderer.Options{
-		ParseGlobPattern: "internal/app/assets/templates/*.gohtml",
-	}
+// func init() {
+// 	opts := renderer.Options{
+// 		ParseGlobPattern: "internal/app/assets/templates/*.gohtml",
+// 	}
 
-	rnd = renderer.New(opts)
-}
+//		rnd = renderer.New(opts)
+//	}
 func SetupHandlers(mux *mux.Router) {
 	mux.HandleFunc("/", home)
 	// mux.HandleFunc("/admin", adminHandler)
