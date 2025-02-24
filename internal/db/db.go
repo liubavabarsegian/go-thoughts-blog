@@ -28,7 +28,6 @@ func SetupDatabase() (*sql.DB, error) {
 }
 
 func connectDatabase() (*sql.DB, error) {
-	fmt.Println("password")
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
 		host, port, user, password, dbname)
 	fmt.Println(password)
