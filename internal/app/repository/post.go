@@ -17,7 +17,7 @@ func NewPostRepository(db *sql.DB) *PostRepository {
 	return &PostRepository{db}
 }
 
-func (m *PostRepository) GetByID(ctx context.Context, id int64) (res models.Post, err error) {
+func (repo *PostRepository) GetByID(ctx context.Context, id int64) (res models.Post, err error) {
 	query := `SELECT id,title,content, author_id, updated_at, created_at
   						FROM article WHERE ID = ?`
 
@@ -36,21 +36,21 @@ func (m *PostRepository) GetByID(ctx context.Context, id int64) (res models.Post
 	return
 }
 
-func (m *PostRepository) Create(postData models.Post, db *sql.DB) (post models.Post, err error) {
+func (repo *PostRepository) CreatePost(postData models.Post) (post models.Post, err error) {
 	query := `INSERT INTO posts (title, content, created_at) VALUES ($1, $2, $3) RETURNING id;`
 
-	result, err := db.Exec(query, postData.Title, postData.Content, time.Now())
+	err = repo.db.QueryRow(query, postData.Title, postData.Content, time.Now()).Scan(&postData.ID)
 	if err != nil {
-		fmt.Println(err)
+		return models.Post{}, err
 	}
-	fmt.Println("RESULT", result)
-	return models.Post{}, err
+
+	return postData, nil
 }
 
-func (m *PostRepository) GetAllPosts() ([]models.Post, error) {
+func (repo *PostRepository) GetAllPosts() ([]models.Post, error) {
 	query := `SELECT id, title, content, created_at FROM posts;`
 
-	rows, err := m.db.Query(query)
+	rows, err := repo.db.Query(query)
 	if rows != nil {
 		defer rows.Close()
 	}

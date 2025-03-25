@@ -12,18 +12,19 @@ import (
 var rnd *renderer.Render
 
 func init() {
-	opts := renderer.Options{
-		ParseGlobPattern: "/app/internal/app/assets/templates/*.gohtml",
-	}
+	// opts := renderer.Options{
+	// 	ParseGlobPattern: "/app/internal/app/assets/templates/*.gohtml",
+	// }
 
-	rnd = renderer.New(opts)
+	// rnd = renderer.New(opts)
 }
 
 // SetupHandlers настраивает маршруты и передает сервисы в хендлеры
 func SetupHandlers(router *mux.Router, services *service.Service) {
-	postHandler := handlers.NewPostHandler(services.Post.Service)
+	postHandler := handlers.NewPostHandler(services.Post)
 
 	router.HandleFunc("/", postHandler.GetAllPosts).Methods(http.MethodGet)
+	router.HandleFunc("/posts/create", postHandler.CreatePost).Methods(http.MethodPost)
 }
 
 // func home(w http.ResponseWriter, r *http.Request) {

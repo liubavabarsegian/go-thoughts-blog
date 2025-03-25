@@ -40,6 +40,7 @@ func (app *App) Go() (err error) {
 	mux := mux.NewRouter()
 	router.SetupHandlers(mux, services)
 	mux.Use(middlewares.WithLogger)
+	mux.Use(middlewares.PanicMiddleware)
 
 	http.ListenAndServe(":8888", mux)
 	return

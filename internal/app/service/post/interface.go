@@ -6,7 +6,7 @@ import "day06/internal/app/models"
 type Service interface {
 	GetAllPosts() ([]models.Post, error)
 	// GetPostByID(id int) (*models.Post, error)
-	// CreatePost(post *models.Post) error
+	CreatePost(post models.Post) (models.Post, error)
 	// UpdatePost(id int, post *models.Post) error
 	// DeletePost(id int) error
 }

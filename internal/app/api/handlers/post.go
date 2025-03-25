@@ -1,8 +1,10 @@
 package handlers
 
 import (
+	"day06/internal/app/models"
 	"day06/internal/app/service/post"
 	"encoding/json"
+	"fmt"
 	"net/http"
 )
 
@@ -18,6 +20,7 @@ func NewPostHandler(postService post.Service) *PostHandler {
 
 // GetAllPosts — обработчик получения всех постов
 func (h *PostHandler) GetAllPosts(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("API GET ALL POSTS")
 	posts, err := h.postService.GetAllPosts()
 	if err != nil {
 		http.Error(w, "Failed to get posts", http.StatusInternalServerError)
@@ -26,4 +29,19 @@ func (h *PostHandler) GetAllPosts(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(posts)
+}
+
+// CreatePost — обработчик создания поста
+func (h *PostHandler) CreatePost(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("CREATE POST")
+	var postModel models.Post
+	json.NewDecoder(r.Body).Decode(&postModel)
+	post, err := h.postService.CreatePost(postModel)
+	if err != nil {
+		http.Error(w, "Failed to get posts", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(post)
 }
