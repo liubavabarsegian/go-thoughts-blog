@@ -5,6 +5,7 @@ import (
 	"day06/internal/app/service/post"
 	"encoding/json"
 	"fmt"
+	"html/template"
 	"net/http"
 )
 
@@ -20,15 +21,14 @@ func NewPostHandler(postService post.Service) *PostHandler {
 
 // GetAllPosts — обработчик получения всех постов
 func (h *PostHandler) GetAllPosts(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("API GET ALL POSTS")
 	posts, err := h.postService.GetAllPosts()
 	if err != nil {
 		http.Error(w, "Failed to get posts", http.StatusInternalServerError)
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(posts)
+	tmpl := template.Must(template.ParseFiles("/app/internal/templates/index.gohtml"))
+	tmpl.Execute(w, posts)
 }
 
 // CreatePost — обработчик создания поста

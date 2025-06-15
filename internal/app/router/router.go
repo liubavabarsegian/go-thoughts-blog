@@ -25,6 +25,10 @@ func SetupHandlers(router *mux.Router, services *service.Service) {
 
 	router.HandleFunc("/", postHandler.GetAllPosts).Methods(http.MethodGet)
 	router.HandleFunc("/posts/create", postHandler.CreatePost).Methods(http.MethodPost)
+
+	// Admin panel (on '/admin' endpoint) where only you can log in,
+	// with just a form to post new articles (let's forget about editing old ones for now, superheroes never look back);
+	// router.HandleFunc("/admin")
 }
 
 // func home(w http.ResponseWriter, r *http.Request) {

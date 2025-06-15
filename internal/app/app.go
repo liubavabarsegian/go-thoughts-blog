@@ -36,7 +36,7 @@ func (app *App) Go() (err error) {
 	repo := repository.NewRepository(db)
 	// Создание сервисного слоя
 	services := service.NewService(repo)
-
+	// Настройка роутера
 	mux := mux.NewRouter()
 	router.SetupHandlers(mux, services)
 	mux.Use(middlewares.WithLogger)
