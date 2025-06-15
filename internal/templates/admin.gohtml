@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head><title>Admin Panel</title></head>
+<body>
+  <h1>Create New Post</h1>
+  <form id="create-post-form">
+    <input type="text" name="title" placeholder="Title"><br>
+    <textarea name="content" placeholder="Content"></textarea><br>
+    <button type="submit">Create</button>
+  </form>
+  <script>
+    document.getElementById('create-post-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const form = e.target;
+      const data = new URLSearchParams(new FormData(form));
+      console.log(form)
+      console.log(data)
+      const res = await fetch('/posts/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+        body: data
+      });
+      const text = await res.text();
+      alert(text);
+    });
+  </script>
+</body>
+</html>

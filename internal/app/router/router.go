@@ -3,6 +3,8 @@ package router
 import (
 	"day06/internal/app/api/handlers"
 	"day06/internal/app/service"
+	"day06/internal/app/service/login"
+	"day06/internal/app/service/post"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -21,36 +23,22 @@ func init() {
 
 // SetupHandlers настраивает маршруты и передает сервисы в хендлеры
 func SetupHandlers(router *mux.Router, services *service.Service) {
-	postHandler := handlers.NewPostHandler(services.Post)
+	setuploginHandler(router, services.Login)
+	setupPostHandler(router, services.Post)
+}
+
+func setupPostHandler(router *mux.Router, postService post.Service) {
+	postHandler := handlers.NewPostHandler(postService)
 
 	router.HandleFunc("/", postHandler.GetAllPosts).Methods(http.MethodGet)
 	router.HandleFunc("/posts/create", postHandler.CreatePost).Methods(http.MethodPost)
-
-	// Admin panel (on '/admin' endpoint) where only you can log in,
-	// with just a form to post new articles (let's forget about editing old ones for now, superheroes never look back);
-	// router.HandleFunc("/admin")
 }
 
-// func home(w http.ResponseWriter, r *http.Request) {
-// 	// logger := log.Ctx(r.Context())
-// 	// page := r.URL.Query().Get("page")
-// 	// articles, hasNext, hasPrevious := fetchArticles(page)
+func setuploginHandler(router *mux.Router, loginService login.Service) {
+	loginHandler := handlers.NewLoginHandler(loginService)
 
-// 	// data := struct {
-// 	// 	Posts        []postEntities.Post
-// 	// 	HasNext      bool
-// 	// 	HasPrevious  bool
-// 	// 	NextPage     int
-// 	// 	PreviousPage int
-// 	// }{
-// 	// 	Posts: post.GetAll(),
-// 	// }
-
-// 	// logger.Println("INFOO")
-// 	err := rnd.HTML(w, http.StatusOK, "home", nil)
-// 	if err != nil {
-// 		fmt.Printf("Ошибка рендеринга шаблона: %v\n", err)
-// 		http.Error(w, "Ошибка рендеринга", http.StatusInternalServerError)
-// 		return
-// 	}
-// }
+	router.HandleFunc("/admin", loginHandler.AdminPage).Methods(http.MethodGet)
+	router.HandleFunc("/admin/login", loginHandler.LoginPage).Methods(http.MethodGet)
+	router.HandleFunc("/admin/login/submit", loginHandler.Login).Methods(http.MethodPost)
+	router.HandleFunc("/admin/logout", loginHandler.Logout).Methods(http.MethodGet)
+}
