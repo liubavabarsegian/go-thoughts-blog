@@ -1,12 +1,11 @@
 <!doctype html>
 <html>
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-<head>
-    <title>Посты</title>
-</head>
+<header>
+    <img src="/app/internal/assets/images/amazing_logo.png" alt="Logo" style="width: 100px;">
+    <h1>My super blog</h1>
+</header>
 <body>
-
-    <h1>Список постов!</h1>
     {{range .}}
         <div>
             <h2>{{.Title}}</h2>
@@ -22,5 +21,14 @@
     {{else}}
         <p>Постов нет</p>
     {{end}}
+
+    <div>
+        {{if .HasPrevious}}
+            <a href="/?page={{.PreviousPage}}">Previous</a>
+        {{end}}
+        {{if .HasNext}}
+            <a href="/?page={{.NextPage}}">Next</a>
+        {{end}}
+    </div>
 </body>
 </html>

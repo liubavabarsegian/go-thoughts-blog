@@ -4,9 +4,9 @@ import (
 	"day06/internal/app/models"
 	"day06/internal/app/service/post"
 	"encoding/json"
-	"fmt"
 	"html/template"
 	"net/http"
+	"strconv"
 )
 
 // PostHandler обрабатывает запросы, связанные с постами
@@ -21,7 +21,18 @@ func NewPostHandler(postService post.Service) *PostHandler {
 
 // GetAllPosts — обработчик получения всех постов
 func (h *PostHandler) GetAllPosts(w http.ResponseWriter, r *http.Request) {
-	posts, err := h.postService.GetAllPosts()
+	page, err := strconv.Atoi(r.URL.Query().Get("page"))
+
+	if err != nil {
+		http.Error(w, "Failed to get posts", http.StatusInternalServerError)
+		return
+	}
+
+	if page < 1 {
+		page = 1
+	}
+
+	posts, err := h.postService.GetAllPosts(page)
 	if err != nil {
 		http.Error(w, "Failed to get posts", http.StatusInternalServerError)
 		return
@@ -33,7 +44,6 @@ func (h *PostHandler) GetAllPosts(w http.ResponseWriter, r *http.Request) {
 
 // CreatePost — обработчик создания поста
 func (h *PostHandler) CreatePost(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("CREATE POST")
 	var postModel models.Post
 	json.NewDecoder(r.Body).Decode(&postModel)
 	post, err := h.postService.CreatePost(postModel)

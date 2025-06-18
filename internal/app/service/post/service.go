@@ -16,8 +16,8 @@ func NewService(repo repository.PostRepository) Service {
 }
 
 // GetAllPosts возвращает все посты
-func (s *PostService) GetAllPosts() ([]models.Post, error) {
-	return s.repo.GetAllPosts()
+func (s *PostService) GetAllPosts(page int) ([]models.Post, error) {
+	return s.repo.GetAllPosts(page)
 }
 
 // CreatePost — обработчик создания поста

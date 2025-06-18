@@ -47,10 +47,11 @@ func (repo *PostRepository) CreatePost(postData models.Post) (post models.Post, 
 	return postData, nil
 }
 
-func (repo *PostRepository) GetAllPosts() ([]models.Post, error) {
-	query := `SELECT id, title, content, created_at FROM posts;`
+func (repo *PostRepository) GetAllPosts(page int) ([]models.Post, error) {
+	query := `SELECT id, title, content, created_at FROM posts LIMIT $1 OFFSET $2;`
 
-	rows, err := repo.db.Query(query)
+	offset := (page - 1) * 3
+	rows, err := repo.db.Query(query, 3, offset)
 	if rows != nil {
 		defer rows.Close()
 	}
