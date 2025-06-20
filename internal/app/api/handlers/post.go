@@ -7,6 +7,8 @@ import (
 	"html/template"
 	"net/http"
 	"strconv"
+
+	"github.com/gorilla/mux"
 )
 
 // PostHandler обрабатывает запросы, связанные с постами
@@ -14,32 +16,75 @@ type PostHandler struct {
 	postService post.Service
 }
 
+type GetPostResponse struct {
+	Post        models.Post
+	CurrentPage uint
+}
+type GetAllPostsResponse struct {
+	Posts        []models.Post
+	HasPrevious  bool
+	HasNext      bool
+	CurrentPage  uint
+	PreviousPage uint
+	NextPage     uint
+}
+
 // NewPostHandler создает новый хендлер для постов
 func NewPostHandler(postService post.Service) *PostHandler {
 	return &PostHandler{postService: postService}
 }
 
-// GetAllPosts — обработчик получения всех постов
-func (h *PostHandler) GetAllPosts(w http.ResponseWriter, r *http.Request) {
-	page, err := strconv.Atoi(r.URL.Query().Get("page"))
-
+// GetPost - получить пост по id
+func (h *PostHandler) GetPost(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.Atoi(mux.Vars(r)["id"])
 	if err != nil {
-		http.Error(w, "Failed to get posts", http.StatusInternalServerError)
+		http.Error(w, "Failed to parse post id", http.StatusInternalServerError)
 		return
 	}
 
-	if page < 1 {
-		page = 1
+	post, err := h.postService.GetPost(uint(id))
+	if err != nil {
+		http.Error(w, "Failed to get the post", http.StatusInternalServerError)
+		return
 	}
 
+	parsed_page, _ := strconv.Atoi(r.URL.Query().Get("page"))
+	page := uint(parsed_page)
+
+	response := &GetPostResponse{
+		Post:        post,
+		CurrentPage: page,
+	}
+
+	tmpl := template.Must(template.ParseFiles("/app/internal/templates/show.gohtml"))
+	tmpl.Execute(w, response)
+}
+
+// GetAllPosts — обработчик получения всех постов
+func (h *PostHandler) GetAllPosts(w http.ResponseWriter, r *http.Request) {
+	parsed_page, err := strconv.Atoi(r.URL.Query().Get("page"))
+	if err != nil || parsed_page < 1 {
+		parsed_page = 1
+	}
+
+	page := uint(parsed_page)
 	posts, err := h.postService.GetAllPosts(page)
 	if err != nil {
 		http.Error(w, "Failed to get posts", http.StatusInternalServerError)
 		return
 	}
 
+	response := &GetAllPostsResponse{
+		Posts:        posts,
+		HasPrevious:  page > 1,
+		HasNext:      page < uint(len(posts)),
+		CurrentPage:  page,
+		PreviousPage: page - 1,
+		NextPage:     page + 1,
+	}
+
 	tmpl := template.Must(template.ParseFiles("/app/internal/templates/index.gohtml"))
-	tmpl.Execute(w, posts)
+	tmpl.Execute(w, response)
 }
 
 // CreatePost — обработчик создания поста

@@ -15,8 +15,13 @@ func NewService(repo repository.PostRepository) Service {
 	return &PostService{repo: repo}
 }
 
+// GetPost находит пост по ID
+func (s *PostService) GetPost(id uint) (models.Post, error) {
+	return s.repo.GetPost(id)
+}
+
 // GetAllPosts возвращает все посты
-func (s *PostService) GetAllPosts(page int) ([]models.Post, error) {
+func (s *PostService) GetAllPosts(page uint) ([]models.Post, error) {
 	return s.repo.GetAllPosts(page)
 }
 

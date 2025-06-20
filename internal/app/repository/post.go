@@ -1,7 +1,6 @@
 package repository
 
 import (
-	"context"
 	"database/sql"
 	"day06/internal/app/models"
 	"fmt"
@@ -17,22 +16,11 @@ func NewPostRepository(db *sql.DB) *PostRepository {
 	return &PostRepository{db}
 }
 
-func (repo *PostRepository) GetByID(ctx context.Context, id int64) (res models.Post, err error) {
-	query := `SELECT id,title,content, author_id, updated_at, created_at
-  						FROM article WHERE ID = ?`
+func (repo *PostRepository) GetPost(id uint) (post models.Post, err error) {
+	query := `SELECT id, title, content, created_at FROM posts WHERE ID = $1`
 
-	fmt.Println(query)
-	// list, err := m.fetch(ctx, query, id)
-	// if err != nil {
-	// 	return models.Post{}, err
-	// }
-
-	// if len(list) > 0 {
-	// 	res = list[0]
-	// } else {
-	// 	return res, models.ErrNotFound
-	// }
-
+	row := repo.db.QueryRow(query, id)
+	err = row.Scan(&post.ID, &post.Title, &post.Content, &post.CreatedAt)
 	return
 }
 
@@ -47,7 +35,7 @@ func (repo *PostRepository) CreatePost(postData models.Post) (post models.Post, 
 	return postData, nil
 }
 
-func (repo *PostRepository) GetAllPosts(page int) ([]models.Post, error) {
+func (repo *PostRepository) GetAllPosts(page uint) ([]models.Post, error) {
 	query := `SELECT id, title, content, created_at FROM posts LIMIT $1 OFFSET $2;`
 
 	offset := (page - 1) * 3

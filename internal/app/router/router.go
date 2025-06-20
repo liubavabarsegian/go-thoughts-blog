@@ -32,6 +32,7 @@ func setupPostHandler(router *mux.Router, postService post.Service) {
 
 	router.HandleFunc("/", postHandler.GetAllPosts).Methods(http.MethodGet)
 	router.HandleFunc("/posts/create", postHandler.CreatePost).Methods(http.MethodPost)
+	router.HandleFunc("/posts/{id}", postHandler.GetPost).Methods(http.MethodGet)
 }
 
 func setuploginHandler(router *mux.Router, loginService login.Service) {

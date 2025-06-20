@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<header>
+    <img src="/app/internal/assets/images/amazing_logo.png" alt="Logo" style="width: 100px;">
+    <h1>My super blog</h1>
+</header>
+<body>
+    <div>
+        <h2>{{$.Post.Title}}</h2>
+
+        <div id="post-{{$.Post.ID}}"></div>
+        <p>
+            <script>
+                document.getElementById("post-{{$.Post.ID}}").innerHTML =
+                marked.parse({{$.Post.Content}});
+            </script>
+        </p>
+    </div>
+
+    <div>
+        <a href="/?page={{$.CurrentPage}}">Back</a>
+    </div>
+</body>
+</html>
