@@ -74,10 +74,16 @@ func (h *PostHandler) GetAllPosts(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	hasNext := false
+	if len(posts) > 3 {
+		hasNext = true
+		posts = posts[:3]
+	}
+
 	response := &GetAllPostsResponse{
 		Posts:        posts,
 		HasPrevious:  page > 1,
-		HasNext:      page < uint(len(posts)),
+		HasNext:      hasNext,
 		CurrentPage:  page,
 		PreviousPage: page - 1,
 		NextPage:     page + 1,

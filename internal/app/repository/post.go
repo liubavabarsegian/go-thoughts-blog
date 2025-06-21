@@ -39,7 +39,8 @@ func (repo *PostRepository) GetAllPosts(page uint) ([]models.Post, error) {
 	query := `SELECT id, title, content, created_at FROM posts LIMIT $1 OFFSET $2;`
 
 	offset := (page - 1) * 3
-	rows, err := repo.db.Query(query, 3, offset)
+	// 4 because limit + 1 trick
+	rows, err := repo.db.Query(query, 4, offset)
 	if rows != nil {
 		defer rows.Close()
 	}
