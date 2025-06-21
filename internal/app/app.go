@@ -7,40 +7,45 @@ import (
 	"day06/internal/app/router"
 	"day06/internal/app/service"
 	"day06/internal/db"
+	"day06/internal/rate_limiter"
 	"net/http"
 
 	"github.com/gorilla/mux"
-	// "honnef.co/go/tools/config"
 )
 
-// set up envs
 // set up logger
 type App struct {
-	// Config *config.Config
-	Server *http.Server
-	DB     *sql.DB
+	RateLimiter *rate_limiter.RateLimiter
+	DB          *sql.DB
 }
 
 func New() *App {
-	return &App{}
+	db, err := db.SetupDatabase()
+	if err != nil {
+		return &App{}
+	}
+
+	rate_limiter := rate_limiter.NewRateLimiter()
+	return &App{DB: db, RateLimiter: rate_limiter}
 }
 
 func (app *App) Go() (err error) {
-	db, err := db.SetupDatabase()
-	if err != nil || db == nil {
+	if app.DB == nil || app.RateLimiter == nil {
 		return
 	}
-	defer db.Close()
+	defer app.DB.Close()
 
 	// Создание репозиториев
-	repo := repository.NewRepository(db)
+	repo := repository.NewRepository(app.DB)
 	// Создание сервисного слоя
 	services := service.NewService(repo)
 	// Настройка роутера
 	mux := mux.NewRouter()
 	router.SetupHandlers(mux, services)
+
 	mux.Use(middlewares.WithLogger)
 	mux.Use(middlewares.PanicMiddleware)
+	mux.Use(middlewares.RateLimiterMiddleware(app.RateLimiter))
 
 	http.ListenAndServe(":8888", mux)
 	return

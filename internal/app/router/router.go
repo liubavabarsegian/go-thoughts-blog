@@ -8,23 +8,14 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/thedevsaddam/renderer"
 )
-
-var rnd *renderer.Render
-
-func init() {
-	// opts := renderer.Options{
-	// 	ParseGlobPattern: "/app/internal/app/assets/templates/*.gohtml",
-	// }
-
-	// rnd = renderer.New(opts)
-}
 
 // SetupHandlers настраивает маршруты и передает сервисы в хендлеры
 func SetupHandlers(router *mux.Router, services *service.Service) {
 	setuploginHandler(router, services.Login)
 	setupPostHandler(router, services.Post)
+
+	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static/"))))
 }
 
 func setupPostHandler(router *mux.Router, postService post.Service) {
