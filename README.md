@@ -74,9 +74,5 @@ curl --request GET \
 curl --request GET \
   --url http://localhost:8888/posts/1 \
   --header 'Content-Type: application/json' \
-  --header 'User-Agent: insomnia/10.3.1' \
-  --data '{
-	"title": "FIRST POST",
-	"content": "CONTENT"
-}'
+  --header 'User-Agent: insomnia/10.3.1'
 ```
