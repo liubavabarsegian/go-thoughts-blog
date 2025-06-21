@@ -58,6 +58,5 @@ func (repo *PostRepository) GetAllPosts(page uint) ([]models.Post, error) {
 	if err != nil {
 		return nil, fmt.Errorf("GetAllPosts Error: ", err)
 	}
-	fmt.Println("RESULT", posts)
 	return posts, nil
 }

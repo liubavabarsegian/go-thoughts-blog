@@ -45,8 +45,6 @@ func connectDatabase() (*sql.DB, error) {
 }
 
 func migrateDatabase(db *sql.DB) error {
-	wd, err := os.Getwd()
-	fmt.Println(wd)
 	sqlFile, err := os.ReadFile("/app/internal/db/schema.sql")
 	if err != nil {
 		return fmt.Errorf("error while migrating DB schema", err)
